@@ -8,7 +8,7 @@ void * operator new(std::size_t n)
     return p;
 }
 
-void operator delete(void * p) // or delete(void *, std::size_t)
+void operator delete(void * p, std::size_t) // or delete(void *, std::size_t)
 {
     std::free(p);
 }
