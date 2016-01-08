@@ -64,6 +64,7 @@ enum {
 const int NUM_INTERRUPTS=80;
 
 typedef std::function<void(int)> ISR_t;
+//typedef void (*ISR_t) (int);
 
 class Manager
 {
