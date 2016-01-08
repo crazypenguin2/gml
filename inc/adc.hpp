@@ -5,6 +5,10 @@
 #include "isr.hpp"
 #include <functional>
 
+/*#ifdef STM32F10x_MD
+	ADC1_IRQn ADC1_2_IRQn;
+#endif*/
+
 class adc
 {
 public:
@@ -66,7 +70,7 @@ private:
             NVIC_InitTypeDef NVIC_InitStructure;
 
             /* Configure and enable ADC interrupt */
-            NVIC_InitStructure.NVIC_IRQChannel = ADC1_IRQn;
+            NVIC_InitStructure.NVIC_IRQChannel = ADC1_2_IRQn;
             NVIC_InitStructure.NVIC_IRQChannelPreemptionPriority = 0;
             NVIC_InitStructure.NVIC_IRQChannelSubPriority = 0;
             NVIC_InitStructure.NVIC_IRQChannelCmd = ENABLE;
@@ -78,7 +82,7 @@ private:
             NVIC_InitTypeDef NVIC_InitStructure;
 
             /* Disable ADC interrupt */
-            NVIC_InitStructure.NVIC_IRQChannel = ADC1_IRQn;
+            NVIC_InitStructure.NVIC_IRQChannel = ADC1_2_IRQn;
             NVIC_InitStructure.NVIC_IRQChannelPreemptionPriority = 0;
             NVIC_InitStructure.NVIC_IRQChannelSubPriority = 0;
             NVIC_InitStructure.NVIC_IRQChannelCmd = DISABLE;
