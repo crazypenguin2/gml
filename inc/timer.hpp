@@ -12,6 +12,12 @@
 #include "stm32f10x.h"
 #include "stm32f10x_conf.h"
 #include "isr.hpp"
+#include "gpio.hpp"
+
+/*using ch1 = channels::ch1;
+using ch2 = channels::ch2;
+using ch3 = channels::ch3;
+using ch4 = channels::ch4;*/
 
 class timer
 {
@@ -96,8 +102,8 @@ private:
 	public:
 		gpio()
 		{
-			GPIO_InitTypeDef GPIO_InitStructure;
-			/* GPIOA Configuration:TIM3 Channel1, 2, 3 and 4 as alternate function push-pull */
+			/*GPIO_InitTypeDef GPIO_InitStructure;
+			/* GPIOA Configuration:TIM3 Channel1, 2, 3 and 4 as alternate function push-pull
 			  GPIO_InitStructure.GPIO_Pin = GPIO_Pin_6 | GPIO_Pin_7;
 			  GPIO_InitStructure.GPIO_Mode = GPIO_Mode_AF_PP;
 			  GPIO_InitStructure.GPIO_Speed = GPIO_Speed_50MHz;
@@ -106,6 +112,25 @@ private:
 
 			  GPIO_InitStructure.GPIO_Pin = GPIO_Pin_0 | GPIO_Pin_1;
 			  GPIO_Init(GPIOB, &GPIO_InitStructure);
+
+			GPIO_InitStructure.GPIO_Mode = GPIO_Mode_AF_PP;
+			GPIO_InitStructure.GPIO_Speed = GPIO_Speed_50MHz;*/
+			{
+				GPIO_InitTypeDef GPIO_InitStructure = {GPIO_to_device{TIM3, ch1}, GPIO_Speed_50MHz, GPIO_Mode_AF_PP};
+				GPIO_Init(GPIO_to_device{TIM3, ch1}, &GPIO_InitStructure);
+			}
+			{
+				GPIO_InitTypeDef GPIO_InitStructure = {GPIO_to_device{TIM3, ch2}, GPIO_Speed_50MHz, GPIO_Mode_AF_PP};
+				GPIO_Init(GPIO_to_device{TIM3, ch2}, &GPIO_InitStructure);
+			}
+			{
+				GPIO_InitTypeDef GPIO_InitStructure = {GPIO_to_device{TIM3, ch3}, GPIO_Speed_50MHz, GPIO_Mode_AF_PP};
+				GPIO_Init(GPIO_to_device{TIM3, ch3}, &GPIO_InitStructure);
+			}
+			{
+				GPIO_InitTypeDef GPIO_InitStructure = {GPIO_to_device{TIM3, ch4}, GPIO_Speed_50MHz, GPIO_Mode_AF_PP};
+				GPIO_Init(GPIO_to_device{TIM3, ch4}, &GPIO_InitStructure);
+			}
 		}
 
 		~gpio()
