@@ -21,12 +21,16 @@ using ch4 = channels::ch4;*/
 enum records {device, channel, port, pin};
 
 constexpr auto timer_to_pin_table = {
+		std::make_tuple(TIM2, ch1, GPIOA, GPIO_Pin_0),
+		std::make_tuple(TIM2, ch2, GPIOA, GPIO_Pin_1),
+		std::make_tuple(TIM2, ch3, GPIOA, GPIO_Pin_2),
+		std::make_tuple(TIM2, ch4, GPIOA, GPIO_Pin_3),
 		std::make_tuple(TIM3, ch1, GPIOA, GPIO_Pin_6),
 		std::make_tuple(TIM3, ch2, GPIOA, GPIO_Pin_7),
 		std::make_tuple(TIM3, ch3, GPIOB, GPIO_Pin_0),
 		std::make_tuple(TIM3, ch4, GPIOB, GPIO_Pin_1)};
 
-using gpio_pair = std::tuple<GPIO_TypeDef*, uint16_t>;
+//using gpio_pair = std::tuple<GPIO_TypeDef*, uint16_t>;
 
 class GPIO_to_device
 {
