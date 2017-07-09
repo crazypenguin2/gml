@@ -96,6 +96,8 @@ private:
         /* Get injected channel13 converted value */
         value = ADC_GetConversionValue(ADC1);
     }
+
+    uint16_t value;
 };
 
 #endif //__ADC_HPP_
