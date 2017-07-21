@@ -53,87 +53,59 @@ class timer
 {
 static constexpr auto Timer = get_timer_address(Timer_id);
 public:
-	timer(uint32_t freq=1000)
-	{
-		TIM_TimeBaseInitTypeDef  TIM_TimeBaseStructure;
-		/* Compute the prescaler value */
-		uint32_t full_period = SystemCoreClock / freq;
+	timer(uint32_t freq=1000);
 
-		//auto PrescalerValue = (uint16_t) (SystemCoreClock / 24000000) - 1;
-		uint16_t prescaler = full_period / 0xFFFF;
-		period = full_period / (prescaler + 1);
-		/* Time base configuration */
-		TIM_TimeBaseStructure.TIM_Period = period;
-		TIM_TimeBaseStructure.TIM_Prescaler = prescaler;
-		TIM_TimeBaseStructure.TIM_ClockDivision = 0;
-		TIM_TimeBaseStructure.TIM_CounterMode = TIM_CounterMode_Up;
+	~timer() {}
 
-		TIM_TimeBaseInit(Timer, &TIM_TimeBaseStructure);
+    void set_frequency(uint32_t freq);
 
-		TIM_ARRPreloadConfig(Timer, ENABLE);
-
-		/* TIM3 enable counter */
-		TIM_Cmd(Timer, ENABLE);
-	}
-
-	~timer()
-	{
-
-	}
+    uint32_t get_frequency()
+    {
+        return SystemCoreClock / (TIM_GetCounter(Timer) * (TIM_GetPrescaler(Timer) + 1));
+    }
 
 	template<channels ch>
 	class oc
 	{
 	public:
-		oc(ratio duty_cycle)
-		{
-			TIM_OCInitTypeDef  TIM_OCInitStructure{
-						TIM_OCMode_PWM1,
-						TIM_OutputState_Enable,
-						0,
-						uint16_t(((uint32_t)period)*duty_cycle.num/duty_cycle.denom),
-						TIM_OCPolarity_High };
-			if(ch == ch1)
-			{
-				TIM_OC1Init(Timer, &TIM_OCInitStructure);
-				TIM_OC1PreloadConfig(Timer, TIM_OCPreload_Enable);
-			}
-			else if (ch == ch2)
-			{
-				TIM_OC2Init(Timer, &TIM_OCInitStructure);
-				TIM_OC2PreloadConfig(Timer, TIM_OCPreload_Enable);
-			}
-			else if (ch == ch3)
-			{
-				TIM_OC3Init(Timer, &TIM_OCInitStructure);
-				TIM_OC3PreloadConfig(Timer, TIM_OCPreload_Enable);
-			}
-			else if (ch == ch4)
-			{
-				TIM_OC4Init(Timer, &TIM_OCInitStructure);
-				TIM_OC4PreloadConfig(Timer, TIM_OCPreload_Enable);
-			}
-			GPIO_InitTypeDef GPIO_InitStructure{GPIO_to_device{Timer, ch}, GPIO_Speed_50MHz, GPIO_Mode_AF_PP};
-			GPIO_Init(GPIO_to_device{Timer, ch}, &GPIO_InitStructure);
-		}
+		oc(ratio duty_cycle);
+		~oc() {}
+		void set_duty(ratio duty_cycle);
 
-		~oc()
+	private:
+		class gpio
 		{
+		public:
+			gpio()
+			{
+				GPIO_InitTypeDef GPIO_InitStructure{GPIO_to_device{Timer, ch}, GPIO_Speed_50MHz, GPIO_Mode_AF_PP};
+				GPIO_Init(GPIO_to_device{Timer, ch}, &GPIO_InitStructure);
+			}
 
-		}
+			~gpio()	{}
+		private:
+			class rcc
+			{
+			public:
+				rcc()
+				{
+					/* GPIOA and GPIOB clock enable */
+					RCC_APB2PeriphClockCmd(RCC_APB2Periph_GPIOA | RCC_APB2Periph_GPIOB |
+						                         RCC_APB2Periph_GPIOC | RCC_APB2Periph_AFIO, ENABLE);
+				}
 
-		void set_duty(ratio duty_cycle)
-		{
-			auto val = uint16_t(((uint32_t)period)*duty_cycle.num/duty_cycle.denom);
-			if(ch == ch1)
-				TIM_SetCompare1(Timer, val);
-			else if (ch == ch2)
-				TIM_SetCompare2(Timer, val);
-			else if (ch == ch3)
-				TIM_SetCompare3(Timer, val);
-			else if (ch == ch4)
-				TIM_SetCompare4(Timer, val);
-		}
+				~rcc() {}
+
+			} rcc_instance;
+		} gpio_instance;
+	};
+
+	template<channels ch>
+	class ic
+	{
+	public:
+		ic();
+		~ic() {}
 
 	private:
 		class gpio
@@ -219,5 +191,6 @@ private:
 template <TIMS Timer_id>
 uint16_t timer<Timer_id>::period = 0;
 
+#include "timer_impl.hpp"
 
 #endif /* GML_INC_TIMER_HPP_ */
