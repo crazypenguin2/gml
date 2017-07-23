@@ -43,7 +43,7 @@ template <int i> constexpr c_isr_t f() { return c_isr<i>; }
 
 template<> constexpr c_isr_t f<1>() { return ::Reset_Handler; }
 
-template<> constexpr c_isr_t f<0>() { return reinterpret_cast<c_isr_t>(0x20002000); }
+//template<> constexpr c_isr_t f<0>() { return reinterpret_cast<c_isr_t>(0x20002000); }
 
 typedef std::array<c_isr_t, NUM_INTERRUPTS> A;
 
@@ -51,16 +51,22 @@ template<int... i> constexpr A fs() { return A{{ f<i>()... }}; }
 
 template<int...> struct S;
 
-template<int... i> struct S<0,i...>
-{ static constexpr A gs() { return fs<0,i...>(); } };
+template<int... i> struct S<1,i...>
+{ static constexpr A gs() { return fs<1,i...>(); } };
 
 template<int i, int... j> struct S<i,j...>
 { static constexpr A gs() { return S<i-1,i,j...>::gs(); } };
 
-auto isr __attribute__ ((section (".isr_vector"))) = S<NUM_INTERRUPTS-1>::gs();
+struct isrwsp
+{
+    uint32_t sp = 0x20002000;
+    decltype(S<NUM_INTERRUPTS-1>::gs()) isr = S<NUM_INTERRUPTS-1>::gs();
+}
 
-/*
-struct Array {
+isr __attribute__ ((section (".isr_vector"))) = isrwsp();
+
+
+/*struct Array {
     //static_assert(N >= 0, "N must be at least 0");
 
     static constexpr auto& value = Array_impl<NUM_INTERRUPTS>::value;

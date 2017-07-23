@@ -20,7 +20,7 @@ using ch3 = channels::ch3;
 using ch4 = channels::ch4;*/
 enum records {device, channel, port, pin};
 
-constexpr auto timer_to_pin_table = {
+auto timer_to_pin_table = {
 		std::make_tuple(TIM2, ch1, GPIOA, GPIO_Pin_0),
 		std::make_tuple(TIM2, ch2, GPIOA, GPIO_Pin_1),
 		std::make_tuple(TIM2, ch3, GPIOA, GPIO_Pin_2),

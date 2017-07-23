@@ -33,6 +33,14 @@ public:
 	uint16_t denom;
 };
 
+//#undef TIM1
+//#undef TIM2
+//#undef TIM3
+
+//constexpr TIM_TypeDef *TIM1 = reinterpret_cast<TIM_TypeDef *> TIM1_BASE;
+//constexpr TIM_TypeDef *TIM2 = reinterpret_cast<TIM_TypeDef *> TIM2_BASE;
+//constexpr TIM_TypeDef *TIM3 = reinterpret_cast<TIM_TypeDef *> TIM3_BASE;
+
 enum TIMS { tim1, tim2, tim3 };
 
 constexpr TIM_TypeDef* get_timer_address(TIMS tim)
@@ -51,7 +59,7 @@ constexpr TIM_TypeDef* get_timer_address(TIMS tim)
 template <TIMS Timer_id>
 class timer
 {
-static constexpr auto Timer = get_timer_address(Timer_id);
+TIM_TypeDef* Timer = get_timer_address(Timer_id);
 public:
 	timer(uint32_t freq=1000);
 
@@ -78,8 +86,8 @@ public:
 		public:
 			gpio()
 			{
-				GPIO_InitTypeDef GPIO_InitStructure{GPIO_to_device{Timer, ch}, GPIO_Speed_50MHz, GPIO_Mode_AF_PP};
-				GPIO_Init(GPIO_to_device{Timer, ch}, &GPIO_InitStructure);
+				GPIO_InitTypeDef GPIO_InitStructure{GPIO_to_device{get_timer_address(Timer_id), ch}, GPIO_Speed_50MHz, GPIO_Mode_AF_PP};
+				GPIO_Init(GPIO_to_device{get_timer_address(Timer_id), ch}, &GPIO_InitStructure);
 			}
 
 			~gpio()	{}
@@ -113,8 +121,8 @@ public:
 		public:
 			gpio()
 			{
-				GPIO_InitTypeDef GPIO_InitStructure{GPIO_to_device{Timer, ch}, GPIO_Speed_50MHz, GPIO_Mode_AF_PP};
-				GPIO_Init(GPIO_to_device{Timer, ch}, &GPIO_InitStructure);
+				GPIO_InitTypeDef GPIO_InitStructure{GPIO_to_device{get_timer_address(Timer_id), ch}, GPIO_Speed_50MHz, GPIO_Mode_AF_PP};
+				GPIO_Init(GPIO_to_device{get_timer_address(Timer_id), ch}, &GPIO_InitStructure);
 			}
 
 			~gpio()
