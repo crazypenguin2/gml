@@ -18,6 +18,15 @@ enum channels {ch1, ch2, ch3, ch4};
 using ch2 = channels::ch2;
 using ch3 = channels::ch3;
 using ch4 = channels::ch4;*/
+template <channels ch>
+struct ch_t
+{ constexpr static channels get() { return ch;} };
+
+using ch1_t = ch_t<ch1>;
+using ch2_t = ch_t<ch2>;
+using ch3_t = ch_t<ch3>;
+using ch4_t = ch_t<ch4>;
+
 enum records {device, channel, port, pin};
 
 auto timer_to_pin_table = {

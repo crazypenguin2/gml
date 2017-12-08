@@ -39,79 +39,80 @@ void timer<Timer_id>::set_frequency(uint32_t freq)
 }
 
 template <TIMS Timer_id>
-template <channels ch>
-timer<Timer_id>::oc<ch>::oc(ratio duty_cycle)
+template <typename ch, typename N>
+timer<Timer_id>::oc<ch, N>::oc(ratio duty_cycle)
 {
     TIM_OCInitTypeDef  TIM_OCInitStructure {TIM_OCMode_PWM1,
                                             TIM_OutputState_Enable,
                                             0,
                                             uint16_t(((uint32_t)period)*duty_cycle.num/duty_cycle.denom),
                                             TIM_OCPolarity_High };
-    if(ch == ch1)
+    if(ch::get() == ch1)
     {
         TIM_OC1Init(get_timer_address(Timer_id), &TIM_OCInitStructure);
         TIM_OC1PreloadConfig(get_timer_address(Timer_id), TIM_OCPreload_Enable);
     }
-    else if (ch == ch2)
+    else if (ch::get() == ch2)
     {
         TIM_OC2Init(get_timer_address(Timer_id), &TIM_OCInitStructure);
         TIM_OC2PreloadConfig(get_timer_address(Timer_id), TIM_OCPreload_Enable);
     }
-    else if (ch == ch3)
+    else if (ch::get() == ch3)
     {
         TIM_OC3Init(get_timer_address(Timer_id), &TIM_OCInitStructure);
         TIM_OC3PreloadConfig(get_timer_address(Timer_id), TIM_OCPreload_Enable);
     }
-    else if (ch == ch4)
+    else if (ch::get() == ch4)
     {
         TIM_OC4Init(get_timer_address(Timer_id), &TIM_OCInitStructure);
         TIM_OC4PreloadConfig(get_timer_address(Timer_id), TIM_OCPreload_Enable);
     }
-    GPIO_InitTypeDef GPIO_InitStructure {GPIO_to_device{get_timer_address(Timer_id), ch},
+    GPIO_InitTypeDef GPIO_InitStructure {GPIO_to_device{get_timer_address(Timer_id), ch::get()},
                                          GPIO_Speed_50MHz, GPIO_Mode_AF_PP};
-    GPIO_Init(GPIO_to_device{get_timer_address(Timer_id), ch}, &GPIO_InitStructure);
+    GPIO_Init(GPIO_to_device{get_timer_address(Timer_id), ch::get()}, &GPIO_InitStructure);
 }
 
 template <TIMS Timer_id>
-template <channels ch>
-void timer<Timer_id>::oc<ch>::set_duty(ratio duty_cycle)
+template <typename ch, typename N>
+void timer<Timer_id>::oc<ch, N>::set_duty(ratio duty_cycle)
 {
+    TIM_TypeDef* Timer = get_timer_address(Timer_id);
     auto val = uint16_t(((uint32_t)period)*duty_cycle.num/duty_cycle.denom);
-    if(ch == ch1)
+    if(ch::get() == ch1)
         TIM_SetCompare1(Timer, val);
-    else if (ch == ch2)
+    else if (ch::get() == ch2)
         TIM_SetCompare2(Timer, val);
-    else if (ch == ch3)
+    else if (ch::get() == ch3)
         TIM_SetCompare3(Timer, val);
-    else if (ch == ch4)
+    else if (ch::get() == ch4)
         TIM_SetCompare4(Timer, val);
 }
 
 template <TIMS Timer_id>
-template <channels ch>
-timer<Timer_id>::ic<ch>::ic()
+template <typename ch, typename N>
+timer<Timer_id>::ic<ch, N>::ic()
 {
     TIM_OCInitTypeDef  TIM_OCInitStructure {TIM_OCMode_PWM1,
                                             TIM_OutputState_Enable,
                                             0,
                                             0,
                                             TIM_OCPolarity_High };
-    if(ch == ch1)
+    if(ch::get() == ch1)
     {
         //TIM_OC1Init(Timer, &TIM_OCInitStructure);
         //TIM_OC1PreloadConfig(Timer, TIM_OCPreload_Enable);
     }
-    else if (ch == ch2)
+    else if (ch::get() == ch2)
     {
         //TIM_OC2Init(Timer, &TIM_OCInitStructure);
         //TIM_OC2PreloadConfig(Timer, TIM_OCPreload_Enable);
     }
-    else if (ch == ch3)
+    else if (ch::get() == ch3)
     {
         //TIM_OC3Init(Timer, &TIM_OCInitStructure);
         //TIM_OC3PreloadConfig(Timer, TIM_OCPreload_Enable);
     }
-    else if (ch == ch4)
+    else if (ch::get() == ch4)
     {
         //TIM_OC4Init(Timer, &TIM_OCInitStructure);
         //TIM_OC4PreloadConfig(Timer, TIM_OCPreload_Enable);

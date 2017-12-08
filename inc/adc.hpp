@@ -4,12 +4,14 @@
 #include "stm32f10x.h"
 #include "isr.hpp"
 #include <functional>
+#include "pipe.hpp"
 
 /*#ifdef STM32F10x_MD
 	ADC1_IRQn ADC1_2_IRQn;
 #endif*/
 
-class adc
+template<typename N = none>
+class adc : N
 {
 public:
     adc()
@@ -95,9 +97,13 @@ private:
         ADC_Cmd(ADC1, DISABLE);
         /* Get injected channel13 converted value */
         value = ADC_GetConversionValue(ADC1);
+        static_cast<N*>(this)->handler(value);
     }
 
     uint16_t value;
 };
+
+template <>
+class adc<none> {};
 
 #endif //__ADC_HPP_
